@@ -5,6 +5,12 @@ import com.portfolioguard.portfolioguard.model.Stock;
 import com.portfolioguard.portfolioguard.service.PortfolioService;
 import com.portfolioguard.portfolioguard.service.RiskMetricsService;
 import com.portfolioguard.portfolioguard.service.MarketDataService;
+import com.portfolioguard.portfolioguard.model.CorrelationAlert;
+import com.portfolioguard.portfolioguard.service.CorrelationMonitorService;
+import com.portfolioguard.portfolioguard.service.AnomalyDetectionService;
+import com.portfolioguard.portfolioguard.service.RiskAlertService;
+import com.portfolioguard.portfolioguard.service.SentimentService;
+import com.portfolioguard.portfolioguard.service.PdfReportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,10 +18,27 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
+import org.springframework.http.MediaType;
+import jakarta.servlet.http.HttpServletResponse;
 
 @RestController
 @RequestMapping("/api/portfolios")
 public class PortfolioController {
+
+    @Autowired
+    private PdfReportService pdfReportService;
+
+    @Autowired
+    private SentimentService sentimentService;
+
+    @Autowired
+    private RiskAlertService riskAlertService;
+
+    @Autowired
+    private AnomalyDetectionService anomalyDetectionService;
+
+    @Autowired
+    private CorrelationMonitorService correlationMonitorService;
 
     @Autowired
     private PortfolioService portfolioService;
@@ -26,10 +49,16 @@ public class PortfolioController {
     @Autowired
     private MarketDataService marketDataService;
 
+    @GetMapping
+    public ResponseEntity<List<Portfolio>> getAllPortfolios() {
+        return ResponseEntity.ok(portfolioService.getAllPortfolios());
+    }
+
     @GetMapping("/health")
     public ResponseEntity<String> health() {
         return ResponseEntity.ok("PortfolioGuard is running");
     }
+    
 
     @PostMapping
     public ResponseEntity<Portfolio> createPortfolio(@RequestBody CreatePortfolioRequest request) {
@@ -115,7 +144,7 @@ public class PortfolioController {
         // Generate simulated historical returns until Alpha Vantage is connected
         List<Double> portfolioReturns = riskMetricsService.getRealReturns(
                 portfolio.getStocks().get(0).getTicker(), 100);
-        List<Double> marketReturns = riskMetricsService.getRealReturns("SPY",100);
+        List<Double> marketReturns = riskMetricsService.getRealReturns("SPY", 100);
 
         // Calculate all risk metrics
         double var95 = riskMetricsService.calculateVaR(portfolioReturns, 0.95);
@@ -178,4 +207,60 @@ public class PortfolioController {
         }
     }
 
+    @PostMapping("/{id}/refresh")
+    public ResponseEntity<String> refreshPrices(@PathVariable String id) {
+        portfolioService.refreshAndPublishPrices(id);
+        return ResponseEntity.ok("Prices refreshed and events published for portfolio: " + id);
+    }
+
+
+    @GetMapping("/{id}/correlations/alerts")
+    public ResponseEntity<List<CorrelationAlert>> getCorrelationAlerts(
+            @PathVariable String id) {
+        Portfolio portfolio = portfolioService.getPortfolio(id);
+        List<CorrelationAlert> alerts = correlationMonitorService
+                .detectCorrelationBreakdowns(portfolio);
+        return ResponseEntity.ok(alerts);
+    }
+
+    @GetMapping("/{id}/anomalies")
+    public ResponseEntity<Map<String, Object>> getAnomalies(@PathVariable String id) {
+        Map<String, Object> result = anomalyDetectionService.detectAnomalies(id);
+        return ResponseEntity.ok(result);
+    }
+
+    @PostMapping("/{id}/refresh-prices")
+    public ResponseEntity<String> refreshPortfolio(
+            @PathVariable String id) {
+
+        portfolioService.refreshAndPublishPrices(id);
+
+        riskAlertService.checkAndBroadcastAlerts(id);
+
+        return ResponseEntity.ok(
+                "Prices refreshed and alerts checked");
+    }
+
+
+    @GetMapping("/{id}/sentiment")
+    public ResponseEntity<Map<String, Object>> getPortfolioSentiment(@PathVariable String id) {
+        Portfolio portfolio = portfolioService.getPortfolio(id);
+        Map<String, Object> sentimentResults = new HashMap<>();
+
+        for (Stock stock : portfolio.getStocks()) {
+            Map<String, Object> sentiment = sentimentService.getSentiment(stock.getTicker());
+            sentimentResults.put(stock.getTicker(), sentiment);
+        }
+
+        return ResponseEntity.ok(sentimentResults);
+    }
+    @GetMapping("/{id}/report")
+    public void generateReport(@PathVariable String id, HttpServletResponse response) throws Exception {
+        byte[] pdf = pdfReportService.generateReport(id);
+        response.setContentType(MediaType.APPLICATION_PDF_VALUE);
+        response.setHeader("Content-Disposition", "attachment; filename=portfolio-report-" + id + ".pdf");
+        response.setContentLength(pdf.length);
+        response.getOutputStream().write(pdf);
+        response.getOutputStream().flush();
+    }
 }

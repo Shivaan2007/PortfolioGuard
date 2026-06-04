@@ -1,5 +1,6 @@
 package com.portfolioguard.portfolioguard.service;
 
+import com.portfolioguard.portfolioguard.kafka.PriceEventProducer;
 import com.portfolioguard.portfolioguard.model.Portfolio;
 import com.portfolioguard.portfolioguard.model.Stock;
 import com.portfolioguard.portfolioguard.repository.PortfolioRepository;
@@ -10,6 +11,12 @@ import java.util.List;
 
 @Service
 public class PortfolioService {
+
+    @Autowired
+    private MarketDataService marketDataService;
+
+    @Autowired
+    private PriceEventProducer priceEventProducer;
 
     @Autowired
     private PortfolioRepository portfolioRepository;
@@ -33,6 +40,10 @@ public class PortfolioService {
     public Portfolio getPortfolio(String id) {
         return portfolioRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Portfolio not found"));
+    }
+
+    public List<Portfolio> getAllPortfolios() {
+        return portfolioRepository.findAll();
     }
 
     public List<Portfolio> getUserPortfolios(String userId) {
@@ -109,6 +120,43 @@ public class PortfolioService {
 
         return (totalReturn - riskFreeRate)
                 / mockVolatility;
+    }
+
+
+    public void refreshAndPublishPrices(String portfolioId) {
+
+        Portfolio portfolio = getPortfolio(portfolioId);
+
+        for (Stock stock : portfolio.getStocks()) {
+
+            try {
+
+                double oldPrice = stock.getCurrentPrice();
+
+                double newPrice =
+                        marketDataService.getCurrentPrice(
+                                stock.getTicker()
+                        );
+
+                stock.setCurrentPrice(newPrice);
+
+                priceEventProducer.publishPriceUpdate(
+                        stock.getTicker(),
+                        oldPrice,
+                        newPrice,
+                        portfolioId
+                );
+
+            } catch (Exception e) {
+
+                System.out.println(
+                        "Failed to refresh price for: "
+                                + stock.getTicker()
+                );
+            }
+        }
+
+        portfolioRepository.save(portfolio);
     }
 
 }
