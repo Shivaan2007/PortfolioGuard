@@ -16,10 +16,12 @@ services:
       ALPHAVANTAGE_API_KEY: ZJDK2NZFO6HOLR7Y
       SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
       RISK_ENGINE_URL: http://risk-engine:5001
+      PRICE_SERVICE_URL: http://price-service:5003
       SENTIMENT_SERVICE_URL: http://sentiment-service:5002
     depends_on:
       - postgres
       - redis
+      - price-service
 
   postgres:
     image: postgres:15-alpine
@@ -65,7 +67,6 @@ services:
     depends_on:
       - kafka
 
-
   sentiment-service:
     build:
       context: ./sentiment-service
@@ -75,6 +76,12 @@ services:
     environment:
       NEWS_API_KEY: da683a63e5124cc7a33731dcdb8d8edd
 
+  price-service:
+    build:
+      context: ./price-service
+      dockerfile: Dockerfile
+    ports:
+      - "5003:5003"
 
 volumes:
   postgres_data:
