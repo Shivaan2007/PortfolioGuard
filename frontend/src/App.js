@@ -1091,7 +1091,7 @@ function Dashboard({ onLogout }) {
   useEffect(() => {
     if (!selectedId) return;
     const client = new Client({
-      webSocketFactory: () => new SockJS(`http://localhost:8080/ws`),
+      webSocketFactory: () => new SockJS(`${window.location.protocol}//${window.location.hostname}:8080/ws`),
       onConnect: () => {
         setConnected(true);
         client.subscribe(`/topic/alerts/${selectedId}`, (msg) => {
@@ -1176,8 +1176,19 @@ function Dashboard({ onLogout }) {
   }, []);
 
   const handleAck = useCallback((id) => setAlerts((prev) => prev.filter((a) => a.id !== id)), []);
-  const handleDownload = useCallback(() => {
-    if (selectedId) window.open(`http://localhost:8080/api/portfolios/${selectedId}/report?token=${localStorage.getItem('pg_token')}`, '_blank');
+  const handleDownload = useCallback(async () => {
+    if (!selectedId) return;
+    try {
+      const res = await api.get(`/api/portfolios/${selectedId}/report`, { responseType: 'blob' });
+      const url = URL.createObjectURL(res.data);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `portfolio-report-${selectedId}.pdf`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error('Report download failed', err);
+    }
   }, [selectedId]);
 
   const tickers = selectedPortfolio?.stocks.map((s) => s.ticker) || [];

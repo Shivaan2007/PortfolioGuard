@@ -34,13 +34,6 @@ public class ChatService {
     @Autowired
     private SentimentService sentimentService;
 
-    @Autowired
-    private org.springframework.jdbc.core.JdbcTemplate jdbcTemplate;
-
-    private void linkMessageToSession(String messageId, String sessionId) {
-        jdbcTemplate.update("UPDATE chat_messages SET session_id = ? WHERE id = ?", sessionId, messageId);
-    }
-
     private static final Pattern TICKER_PATTERN = Pattern.compile("\\b[A-Z]{2,5}\\b");
 
     private static final java.util.Map<String, String> COMPANY_NAME_TO_TICKER = java.util.Map.ofEntries(
@@ -105,16 +98,16 @@ public class ChatService {
         ChatMessage userMessage = new ChatMessage();
         userMessage.setRole("user");
         userMessage.setContent(userContent);
-        ChatMessage savedUser = messageRepository.save(userMessage);
-        linkMessageToSession(savedUser.getId(), sessionId);
+        userMessage.setSession(session);
+        messageRepository.save(userMessage);
 
         String replyText = generateReply(userContent, userId, portfolioId);
 
         ChatMessage assistantMessage = new ChatMessage();
         assistantMessage.setRole("assistant");
         assistantMessage.setContent(replyText);
+        assistantMessage.setSession(session);
         ChatMessage savedAssistant = messageRepository.save(assistantMessage);
-        linkMessageToSession(savedAssistant.getId(), sessionId);
 
         // Auto-title the session from the first user message
         if ("New conversation".equals(session.getTitle())) {
@@ -205,8 +198,7 @@ public class ChatService {
                     + "\"Summarize AAPL's recent pattern.\"";
 
         } catch (Exception e) {
-            return "I ran into an issue pulling that data: " + e.getMessage()
-                    + ". Make sure you have a portfolio selected with at least one position.";
+            return "I ran into an issue pulling that data. Make sure you have a portfolio selected with at least one position.";
         }
     }
 
@@ -257,6 +249,7 @@ public class ChatService {
         if (portfolioId == null) return base;
         try {
             Portfolio portfolio = portfolioService.getPortfolioForUser(portfolioId, userId);
+            if (portfolio.getStocks().isEmpty()) return base;
             List<Double> returns = riskMetricsService.getRealReturns(portfolio.getStocks().get(0).getTicker(), 100);
             List<Double> marketReturns = riskMetricsService.getRealReturns("SPY", 100);
             double beta = riskMetricsService.calculateBeta(returns, marketReturns);

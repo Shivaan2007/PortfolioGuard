@@ -30,8 +30,12 @@ public class StockSearchService {
     private String apiKey;
 
     private static final String BASE_URL = "https://www.alphavantage.co/query";
-    private final RestTemplate restTemplate = new RestTemplate();
-    private final ObjectMapper mapper = new ObjectMapper();
+
+    @Autowired
+    private RestTemplate restTemplate;
+
+    @Autowired
+    private ObjectMapper mapper;
 
     @Autowired
     private CacheManager cacheManager;

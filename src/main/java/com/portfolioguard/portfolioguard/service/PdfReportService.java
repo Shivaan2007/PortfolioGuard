@@ -69,7 +69,6 @@ public class PdfReportService {
         addInfoRow(infoTable, "Portfolio Name", portfolio.getName(), tableBodyFont);
         addInfoRow(infoTable, "Strategy", portfolio.getStrategy(), tableBodyFont);
         addInfoRow(infoTable, "Description", portfolio.getDescription(), tableBodyFont);
-        addInfoRow(infoTable, "User ID", portfolio.getUserId(), tableBodyFont);
         addInfoRow(infoTable, "Created", portfolio.getCreatedAt()
                 .format(DateTimeFormatter.ofPattern("MMM dd, yyyy")), tableBodyFont);
         addInfoRow(infoTable, "Total Positions", String.valueOf(portfolio.getStocks().size()), tableBodyFont);
@@ -108,8 +107,12 @@ public class PdfReportService {
             addMetricCell(riskTable, "VaR (99%)", String.format("%.2f%%", var99), metricValueFont, metricLabelFont);
             addMetricCell(riskTable, "Portfolio Beta", String.format("%.3f", beta), metricValueFont, metricLabelFont);
             doc.add(riskTable);
+        } catch (IndexOutOfBoundsException e) {
+            Paragraph riskNote = new Paragraph("Risk metrics require at least one position.", subFont);
+            riskNote.setSpacingAfter(16);
+            doc.add(riskNote);
         } catch (Exception e) {
-            Paragraph riskNote = new Paragraph("Risk metrics unavailable: " + e.getMessage(), subFont);
+            Paragraph riskNote = new Paragraph("Risk metrics temporarily unavailable.", subFont);
             riskNote.setSpacingAfter(16);
             doc.add(riskNote);
         }

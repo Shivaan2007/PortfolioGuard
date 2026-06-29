@@ -2,6 +2,7 @@ package com.portfolioguard.portfolioguard.security;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -18,14 +19,21 @@ public class JwtUtil {
     @Value("${jwt.expiration-ms:86400000}")
     private long expirationMs;
 
-    private SecretKey key() {
+    private SecretKey cachedKey;
+
+    @PostConstruct
+    private void initKey() {
         byte[] bytes = secret.getBytes(StandardCharsets.UTF_8);
         if (bytes.length < 32) {
             byte[] padded = new byte[32];
             System.arraycopy(bytes, 0, padded, 0, bytes.length);
             bytes = padded;
         }
-        return Keys.hmacShaKeyFor(bytes);
+        cachedKey = Keys.hmacShaKeyFor(bytes);
+    }
+
+    private SecretKey key() {
+        return cachedKey;
     }
 
     public String generateToken(String userId, String username, String role) {

@@ -23,8 +23,7 @@ public class ChatSession {
 
     private String title;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    @JoinColumn(name = "session_id")
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY, mappedBy = "session")
     @com.fasterxml.jackson.annotation.JsonIgnore
     private List<ChatMessage> messages = new ArrayList<>();
 

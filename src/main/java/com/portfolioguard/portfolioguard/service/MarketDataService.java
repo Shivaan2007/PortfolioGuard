@@ -1,21 +1,29 @@
 package com.portfolioguard.portfolioguard.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 @Service
 public class MarketDataService {
 
+    private static final Logger log = LoggerFactory.getLogger(MarketDataService.class);
+
     @Value("${price.service.url:http://localhost:5003}")
     private String priceServiceUrl;
 
-    private final RestTemplate restTemplate = new RestTemplate();
-    private final ObjectMapper mapper = new ObjectMapper();
+    @Autowired
+    private RestTemplate restTemplate;
+
+    @Autowired
+    private ObjectMapper mapper;
 
     public double getCurrentPrice(String ticker) {
         try {
@@ -25,7 +33,7 @@ public class MarketDataService {
             Object price = response.get("price");
             return ((Number) price).doubleValue();
         } catch (Exception e) {
-            System.out.println("Failed to fetch price for " + ticker + ": " + e.getMessage());
+            log.warn("Failed to fetch price for {}: {}", ticker, e.getMessage());
             throw new RuntimeException("Failed to fetch price for: " + ticker);
         }
     }

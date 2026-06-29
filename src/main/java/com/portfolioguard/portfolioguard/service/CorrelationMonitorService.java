@@ -3,6 +3,8 @@ package com.portfolioguard.portfolioguard.service;
 import com.portfolioguard.portfolioguard.model.CorrelationAlert;
 import com.portfolioguard.portfolioguard.model.Portfolio;
 import com.portfolioguard.portfolioguard.model.Stock;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
@@ -11,6 +13,8 @@ import java.util.List;
 
 @Service
 public class CorrelationMonitorService {
+
+    private static final Logger log = LoggerFactory.getLogger(CorrelationMonitorService.class);
 
     @Autowired
     private RiskMetricsService riskMetricsService;
@@ -77,8 +81,7 @@ public class CorrelationMonitorService {
                     }
 
                 } catch (Exception e) {
-                    System.out.println("Failed to check correlation for "
-                            + tickerA + "-" + tickerB + ": " + e.getMessage());
+                    log.warn("Failed to check correlation for {}-{}: {}", tickerA, tickerB, e.getMessage());
                 }
             }
         }

@@ -1,6 +1,8 @@
 package com.portfolioguard.portfolioguard.service;
 
 import com.portfolioguard.portfolioguard.model.CorrelationAlert;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
@@ -11,6 +13,8 @@ import java.util.Map;
 
 @Service
 public class RiskAlertService {
+
+    private static final Logger log = LoggerFactory.getLogger(RiskAlertService.class);
 
     @Autowired
     private SimpMessagingTemplate messagingTemplate;
@@ -44,8 +48,7 @@ public class RiskAlertService {
             messagingTemplate.convertAndSend(
                     "/topic/alerts/" + portfolioId, alert);
 
-            System.out.println("🚨 WebSocket alert broadcast for portfolio: "
-                    + portfolioId);
+            log.info("WebSocket anomaly alert broadcast for portfolio {}", portfolioId);
         }
 
         // Check correlation breakdowns

@@ -22,7 +22,8 @@ public class AnomalyDetectionService {
     @Autowired
     private PortfolioService portfolioService;
 
-    private final RestTemplate restTemplate = new RestTemplate();
+    @Autowired
+    private RestTemplate restTemplate;
 
     public Map<String, Object> detectAnomalies(String portfolioId) {
         Portfolio portfolio = portfolioService.getPortfolio(portfolioId);

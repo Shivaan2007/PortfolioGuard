@@ -1,6 +1,8 @@
 package com.portfolioguard.portfolioguard.kafka;
 
 import com.portfolioguard.portfolioguard.service.RiskAlertService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -12,6 +14,7 @@ import java.util.Map;
 @Service
 public class PriceEventConsumer {
 
+    private static final Logger log = LoggerFactory.getLogger(PriceEventConsumer.class);
     private static final double SIGNIFICANT_MOVE_THRESHOLD = 2.0;
 
     @Autowired
@@ -22,11 +25,9 @@ public class PriceEventConsumer {
 
     @KafkaListener(topics = "price-updates", groupId = "portfolioguard")
     public void consumePriceUpdate(PriceUpdateEvent event) {
-        System.out.println("Received price update: "
-                + event.getTicker()
-                + " $" + event.getOldPrice()
-                + " → $" + event.getNewPrice()
-                + " (" + String.format("%.2f", event.getChangePercent()) + "%)");
+        log.debug("Received price update: {} ${} → ${} ({}%)",
+                event.getTicker(), event.getOldPrice(), event.getNewPrice(),
+                String.format("%.2f", event.getChangePercent()));
 
         // Always broadcast a price update alert so dashboard shows activity
         Map<String, Object> priceAlert = new HashMap<>();
@@ -44,12 +45,12 @@ public class PriceEventConsumer {
 
         // If significant move, also run full anomaly + correlation checks
         if (Math.abs(event.getChangePercent()) > SIGNIFICANT_MOVE_THRESHOLD) {
-            System.out.println("⚠️ SIGNIFICANT MOVE: " + event.getTicker()
-                    + " moved " + String.format("%.2f", event.getChangePercent()) + "%");
+            log.warn("Significant move: {} moved {}%", event.getTicker(),
+                    String.format("%.2f", event.getChangePercent()));
             try {
                 riskAlertService.checkAndBroadcastAlerts(event.getPortfolioId());
             } catch (Exception e) {
-                System.out.println("Alert check failed: " + e.getMessage());
+                log.error("Alert check failed for portfolio {}: {}", event.getPortfolioId(), e.getMessage());
             }
         }
     }

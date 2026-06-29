@@ -12,7 +12,8 @@ public class SentimentService {
     @Value("${sentiment.service.url:http://localhost:5002}")
     private String sentimentServiceUrl;
 
-    private final RestTemplate restTemplate = new RestTemplate();
+    @org.springframework.beans.factory.annotation.Autowired
+    private RestTemplate restTemplate;
 
     // unless condition prevents the error-fallback map from being cached —
     // the sentiment service might recover, and we don't want to lock in

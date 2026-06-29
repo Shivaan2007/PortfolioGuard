@@ -7,12 +7,16 @@ import com.portfolioguard.portfolioguard.model.Portfolio;
 import com.portfolioguard.portfolioguard.model.Stock;
 import com.portfolioguard.portfolioguard.repository.PortfolioRepository;
 import com.portfolioguard.portfolioguard.repository.StockRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
 public class PortfolioService {
+
+    private static final Logger log = LoggerFactory.getLogger(PortfolioService.class);
 
     @Autowired
     private MarketDataService marketDataService;
@@ -41,7 +45,7 @@ public class PortfolioService {
 
     public Portfolio getPortfolio(String id) {
         return portfolioRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Portfolio not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Portfolio not found"));
     }
 
     /**
@@ -166,11 +170,7 @@ public class PortfolioService {
                 );
 
             } catch (Exception e) {
-
-                System.out.println(
-                        "Failed to refresh price for: "
-                                + stock.getTicker()
-                );
+                log.warn("Failed to refresh price for {}: {}", stock.getTicker(), e.getMessage());
             }
         }
 
