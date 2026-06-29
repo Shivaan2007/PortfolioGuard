@@ -118,9 +118,6 @@ Alert types: `PRICE_UPDATE`, `ML_ANOMALY`, `CORRELATION_BREAKDOWN`, `VAR_BREACH`
 
 ---
 
-## Interview talking points
-
-> "PortfolioGuard is a real-time portfolio risk monitoring system modeled on BlackRock's Aladdin platform. It computes institutional risk metrics including Value at Risk, Sharpe Ratio, and Portfolio Beta on live market data, uses Isolation Forest ML to detect anomalous portfolio behavior across five risk dimensions, streams price updates through Kafka, and delivers real-time alerts via WebSocket to a React dashboard. The backend is Java/Spring Boot with PostgreSQL and Redis, with Python microservices handling the ML and NLP layers — all containerized with Docker."
 
 ---
 

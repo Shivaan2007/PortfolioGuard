@@ -1,5 +1,7 @@
 package com.portfolioguard.portfolioguard.service;
 
+import com.portfolioguard.portfolioguard.exception.ForbiddenException;
+import com.portfolioguard.portfolioguard.exception.ResourceNotFoundException;
 import com.portfolioguard.portfolioguard.kafka.PriceEventProducer;
 import com.portfolioguard.portfolioguard.model.Portfolio;
 import com.portfolioguard.portfolioguard.model.Stock;
@@ -40,6 +42,22 @@ public class PortfolioService {
     public Portfolio getPortfolio(String id) {
         return portfolioRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Portfolio not found"));
+    }
+
+    /**
+     * Ownership-enforcing lookup. Every controller endpoint that exposes a
+     * portfolio by ID MUST go through this method (not getPortfolio directly)
+     * so a logged-in user can never read/modify another user's portfolio by
+     * guessing or enumerating IDs in the URL.
+     */
+    public Portfolio getPortfolioForUser(String id, String requestingUserId) {
+        Portfolio portfolio = portfolioRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Portfolio not found"));
+
+        if (!portfolio.getUserId().equals(requestingUserId)) {
+            throw new ForbiddenException("You do not have access to this portfolio");
+        }
+        return portfolio;
     }
 
     public List<Portfolio> getAllPortfolios() {
@@ -160,9 +178,3 @@ public class PortfolioService {
     }
 
 }
-
-
-
-
-
-

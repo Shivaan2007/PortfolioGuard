@@ -1,37 +1,32 @@
 package com.portfolioguard.portfolioguard.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
-@Table(name = "users")
+@Table(name = "chat_sessions")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class User {
+public class ChatSession {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
-    @Column(nullable = false, unique = true)
-    private String username;
-
-    @Column(nullable = false, unique = true)
-    private String email;
-
-    @JsonIgnore
     @Column(nullable = false)
-    private String passwordHash;
+    private String userId;
 
-    @Column(nullable = false)
-    private String role = "USER";
+    private String title;
 
-    private String fullName;
-    private String firm;
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JoinColumn(name = "session_id")
+    @com.fasterxml.jackson.annotation.JsonIgnore
+    private List<ChatMessage> messages = new ArrayList<>();
 
     @Column(updatable = false)
     private LocalDateTime createdAt;
@@ -42,7 +37,7 @@ public class User {
     protected void onCreate() {
         createdAt = LocalDateTime.now();
         updatedAt = LocalDateTime.now();
-        if (role == null) role = "USER";
+        if (title == null || title.isBlank()) title = "New conversation";
     }
 
     @PreUpdate
