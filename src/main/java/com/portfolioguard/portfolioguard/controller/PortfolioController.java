@@ -128,6 +128,11 @@ public class PortfolioController {
         Portfolio portfolio = portfolioService.getPortfolioForUser(id, principal.getId());
         int stockCount = portfolio.getStocks().size();
 
+        if (stockCount == 0) {
+            return ResponseEntity.badRequest()
+                    .body(Map.of("error", "Add at least one stock to view risk metrics"));
+        }
+
         List<Double> portfolioReturns = riskMetricsService.getRealReturns(
                 portfolio.getStocks().get(0).getTicker(), 100);
         List<Double> marketReturns = riskMetricsService.getRealReturns("SPY", 100);

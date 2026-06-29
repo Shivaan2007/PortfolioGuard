@@ -27,6 +27,13 @@ public class AnomalyDetectionService {
     public Map<String, Object> detectAnomalies(String portfolioId) {
         Portfolio portfolio = portfolioService.getPortfolio(portfolioId);
 
+        if (portfolio.getStocks().isEmpty()) {
+            Map<String, Object> empty = new HashMap<>();
+            empty.put("is_current_anomalous", false);
+            empty.put("message", "No stocks in portfolio");
+            return empty;
+        }
+
         List<Map<String, Object>> metricsHistory = new ArrayList<>();
 
         List<Double> returns = riskMetricsService

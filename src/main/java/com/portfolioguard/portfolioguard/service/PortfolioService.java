@@ -29,7 +29,7 @@ public class PortfolioService {
     public Portfolio createPortfolio(String name, String description,
                                      String strategy, String userId) {
         if (portfolioRepository.existsByNameAndUserId(name, userId)) {
-            throw new RuntimeException("Portfolio with this name already exists");
+            throw new IllegalArgumentException("A portfolio with this name already exists");
         }
         Portfolio portfolio = new Portfolio();
         portfolio.setName(name);
@@ -71,7 +71,7 @@ public class PortfolioService {
     public Portfolio addStock(String portfolioId, Stock stock) {
         Portfolio portfolio = getPortfolio(portfolioId);
         if (stockRepository.existsByTickerAndPortfolioId(stock.getTicker(), portfolioId)) {
-            throw new RuntimeException("Stock already exists in portfolio");
+            throw new IllegalArgumentException("Stock " + stock.getTicker() + " is already in this portfolio");
         }
 
         portfolio.getStocks().add(stock);

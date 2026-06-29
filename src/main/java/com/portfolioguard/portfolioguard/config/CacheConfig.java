@@ -1,6 +1,8 @@
 package com.portfolioguard.portfolioguard.config;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.cache.annotation.CachingConfigurer;
+import org.springframework.cache.interceptor.CacheErrorHandler;
+import org.springframework.cache.interceptor.SimpleCacheErrorHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
@@ -12,32 +14,31 @@ import org.springframework.data.redis.serializer.RedisSerializationContext;
 import java.time.Duration;
 
 @Configuration
-public class CacheConfig {
+public class CacheConfig implements CachingConfigurer {
 
-    /**
-     * Spring's default Redis cache value serializer is Java's native
-     * serialization, which doesn't play well with Java records (StockQuote,
-     * StockOverview, etc.) used by StockSearchService. This bean replaces
-     * the auto-configured RedisCacheManager with one using a Jackson-based
-     * JSON serializer instead.
-     *
-     * IMPORTANT: GenericJackson2JsonRedisSerializer's no-arg constructor
-     * builds its OWN internal ObjectMapper with type-info embedding handled
-     * safely and consistently for cache round-trips. Do NOT pass in a
-     * manually-configured ObjectMapper with activateDefaultTyping() - doing
-     * so caused a real bug where cached values became unreadable across
-     * different call sites (WRAPPER_ARRAY deserialization errors).
-     */
     @Bean
     public RedisCacheManager cacheManager(RedisConnectionFactory connectionFactory) {
         GenericJackson2JsonRedisSerializer jsonSerializer = new GenericJackson2JsonRedisSerializer();
 
         RedisCacheConfiguration config = RedisCacheConfiguration.defaultCacheConfig()
                 .entryTtl(Duration.ofMinutes(15))
+                // "pg:v1:" prefix means any stale entries written under the old serializer
+                // format are never read — they simply become cache misses. Bump to v2
+                // whenever the serializer configuration changes again.
+                .computePrefixWith(cacheName -> "pg:v1:" + cacheName + ":")
                 .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(jsonSerializer));
 
         return RedisCacheManager.builder(connectionFactory)
                 .cacheDefaults(config)
                 .build();
+    }
+
+    // Makes ALL cache errors (deserialization failures, connection errors, timeouts)
+    // non-fatal. On a cache-get error the operation falls through to calling the
+    // real method; on a cache-put error the result is still returned to the caller.
+    // This ensures Redis can never crash a live request.
+    @Override
+    public CacheErrorHandler errorHandler() {
+        return new SimpleCacheErrorHandler();
     }
 }
