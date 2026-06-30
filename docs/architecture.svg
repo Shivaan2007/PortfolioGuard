@@ -1,0 +1,199 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 680" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif">
+  <defs>
+    <marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#64748b"/>
+    </marker>
+    <marker id="arr-ws" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#0ea5e9"/>
+    </marker>
+    <marker id="arr-kafka" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#f59e0b"/>
+    </marker>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#00000018"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1000" height="680" fill="#f8fafc" rx="0"/>
+
+  <!-- Title -->
+  <text x="500" y="36" text-anchor="middle" font-size="17" font-weight="700" fill="#0f172a">PortfolioGuard — System Architecture</text>
+  <text x="500" y="55" text-anchor="middle" font-size="11" fill="#64748b">Spring Boot 3.5 · Kafka · Redis · Python ML · React 19</text>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- LAYER LABELS                                                    -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <text x="16" y="110" font-size="9" font-weight="600" fill="#94a3b8" letter-spacing="1.2" transform="rotate(-90,16,110)">CLIENT</text>
+  <text x="16" y="265" font-size="9" font-weight="600" fill="#94a3b8" letter-spacing="1.2" transform="rotate(-90,16,265)">APPLICATION</text>
+  <text x="16" y="450" font-size="9" font-weight="600" fill="#94a3b8" letter-spacing="1.2" transform="rotate(-90,16,450)">INFRASTRUCTURE</text>
+  <text x="16" y="610" font-size="9" font-weight="600" fill="#94a3b8" letter-spacing="1.2" transform="rotate(-90,16,610)">EXTERNAL</text>
+
+  <!-- Lane dividers -->
+  <line x1="38" y1="145" x2="975" y2="145" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="4,3"/>
+  <line x1="38" y1="355" x2="975" y2="355" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="4,3"/>
+  <line x1="38" y1="535" x2="975" y2="535" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="4,3"/>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- CLIENT TIER                                                     -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <rect x="310" y="72" width="380" height="66" rx="8" fill="#1e40af" filter="url(#shadow)"/>
+  <text x="500" y="96" text-anchor="middle" font-size="13" font-weight="700" fill="#ffffff">React 19 Dashboard</text>
+  <text x="500" y="112" text-anchor="middle" font-size="10" fill="#bfdbfe">Recharts · STOMP/SockJS · Axios</text>
+  <text x="500" y="127" text-anchor="middle" font-size="9" fill="#93c5fd">localhost:3000</text>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- APPLICATION TIER — Spring Boot                                  -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <rect x="200" y="158" width="600" height="188" rx="8" fill="#0369a1" filter="url(#shadow)"/>
+  <text x="500" y="181" text-anchor="middle" font-size="13" font-weight="700" fill="#ffffff">Spring Boot 3.5 API</text>
+  <text x="500" y="196" text-anchor="middle" font-size="9" fill="#bae6fd">localhost:8080</text>
+
+  <!-- Internal boxes inside Spring Boot -->
+  <!-- Auth -->
+  <rect x="215" y="204" width="110" height="44" rx="5" fill="#075985"/>
+  <text x="270" y="222" text-anchor="middle" font-size="9" font-weight="600" fill="#e0f2fe">JWT Auth</text>
+  <text x="270" y="235" text-anchor="middle" font-size="8" fill="#bae6fd">BCrypt · JJWT</text>
+  <text x="270" y="244" text-anchor="middle" font-size="8" fill="#93c5fd">0.11.5</text>
+
+  <!-- Controllers -->
+  <rect x="337" y="204" width="110" height="44" rx="5" fill="#075985"/>
+  <text x="392" y="221" text-anchor="middle" font-size="9" font-weight="600" fill="#e0f2fe">Controllers</text>
+  <text x="392" y="232" text-anchor="middle" font-size="8" fill="#bae6fd">Portfolio · Stock</text>
+  <text x="392" y="242" text-anchor="middle" font-size="8" fill="#bae6fd">Auth · Chat</text>
+
+  <!-- Services -->
+  <rect x="459" y="204" width="110" height="44" rx="5" fill="#075985"/>
+  <text x="514" y="221" text-anchor="middle" font-size="9" font-weight="600" fill="#e0f2fe">Risk Services</text>
+  <text x="514" y="232" text-anchor="middle" font-size="8" fill="#bae6fd">VaR · Beta · Sharpe</text>
+  <text x="514" y="242" text-anchor="middle" font-size="8" fill="#bae6fd">Correlation · P&amp;L</text>
+
+  <!-- WebSocket -->
+  <rect x="581" y="204" width="110" height="44" rx="5" fill="#075985"/>
+  <text x="636" y="221" text-anchor="middle" font-size="9" font-weight="600" fill="#e0f2fe">WebSocket</text>
+  <text x="636" y="232" text-anchor="middle" font-size="8" fill="#bae6fd">STOMP broker</text>
+  <text x="636" y="242" text-anchor="middle" font-size="8" fill="#bae6fd">/topic/alerts/*</text>
+
+  <!-- Kafka box inside Spring -->
+  <rect x="215" y="260" width="476" height="76" rx="5" fill="#1e3a5f"/>
+  <text x="330" y="280" text-anchor="middle" font-size="9" font-weight="600" fill="#fcd34d">Kafka Producer</text>
+  <text x="330" y="292" text-anchor="middle" font-size="8" fill="#fde68a">price-updates topic</text>
+  <text x="453" y="280" text-anchor="middle" font-size="9" fill="#64748b">│</text>
+  <text x="576" y="280" text-anchor="middle" font-size="9" font-weight="600" fill="#fcd34d">Kafka Consumer</text>
+  <text x="576" y="292" text-anchor="middle" font-size="8" fill="#fde68a">groupId: portfolioguard</text>
+  <text x="453" y="305" text-anchor="middle" font-size="8" fill="#94a3b8">→ price events → alert check → WebSocket push</text>
+  <text x="453" y="318" text-anchor="middle" font-size="8" fill="#64748b">significant move (&gt;2%) triggers ML anomaly + correlation scan</text>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- INFRASTRUCTURE TIER                                             -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+
+  <!-- PostgreSQL -->
+  <rect x="54" y="370" width="148" height="74" rx="8" fill="#14532d" filter="url(#shadow)"/>
+  <text x="128" y="394" text-anchor="middle" font-size="12" font-weight="700" fill="#ffffff">PostgreSQL 15</text>
+  <text x="128" y="410" text-anchor="middle" font-size="9" fill="#bbf7d0">JPA / Hibernate</text>
+  <text x="128" y="424" text-anchor="middle" font-size="8" fill="#86efac">portfolios · stocks</text>
+  <text x="128" y="436" text-anchor="middle" font-size="8" fill="#86efac">users · chat sessions</text>
+
+  <!-- Redis -->
+  <rect x="218" y="370" width="148" height="74" rx="8" fill="#7f1d1d" filter="url(#shadow)"/>
+  <text x="292" y="394" text-anchor="middle" font-size="12" font-weight="700" fill="#ffffff">Redis 7</text>
+  <text x="292" y="410" text-anchor="middle" font-size="9" fill="#fecaca">Spring Cache</text>
+  <text x="292" y="424" text-anchor="middle" font-size="8" fill="#fca5a5">TTL: 1 h · prefix: pg:v1:</text>
+  <text x="292" y="436" text-anchor="middle" font-size="8" fill="#fca5a5">SimpleCacheErrorHandler</text>
+
+  <!-- Kafka -->
+  <rect x="382" y="370" width="148" height="74" rx="8" fill="#78350f" filter="url(#shadow)"/>
+  <text x="456" y="393" text-anchor="middle" font-size="12" font-weight="700" fill="#ffffff">Apache Kafka</text>
+  <text x="456" y="409" text-anchor="middle" font-size="9" fill="#fde68a">Confluent 7.4.0</text>
+  <text x="456" y="423" text-anchor="middle" font-size="8" fill="#fcd34d">topic: price-updates</text>
+  <text x="456" y="436" text-anchor="middle" font-size="8" fill="#fcd34d">+ Zookeeper</text>
+
+  <!-- Python Risk Engine -->
+  <rect x="546" y="370" width="148" height="74" rx="8" fill="#4c1d95" filter="url(#shadow)"/>
+  <text x="620" y="393" text-anchor="middle" font-size="12" font-weight="700" fill="#ffffff">Risk Engine</text>
+  <text x="620" y="409" text-anchor="middle" font-size="9" fill="#e9d5ff">Flask · scikit-learn</text>
+  <text x="620" y="423" text-anchor="middle" font-size="8" fill="#d8b4fe">IsolationForest (5-dim)</text>
+  <text x="620" y="436" text-anchor="middle" font-size="8" fill="#c4b5fd">localhost:5001</text>
+
+  <!-- Python Price Service -->
+  <rect x="710" y="370" width="148" height="74" rx="8" fill="#1e3a5f" filter="url(#shadow)"/>
+  <text x="784" y="393" text-anchor="middle" font-size="12" font-weight="700" fill="#ffffff">Price Service</text>
+  <text x="784" y="409" text-anchor="middle" font-size="9" fill="#bae6fd">Flask · yfinance</text>
+  <text x="784" y="423" text-anchor="middle" font-size="8" fill="#93c5fd">Historical OHLCV</text>
+  <text x="784" y="436" text-anchor="middle" font-size="8" fill="#93c5fd">localhost:5003</text>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- EXTERNAL TIER                                                   -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+
+  <!-- Alpha Vantage -->
+  <rect x="150" y="555" width="180" height="60" rx="8" fill="#374151" filter="url(#shadow)"/>
+  <text x="240" y="578" text-anchor="middle" font-size="11" font-weight="700" fill="#ffffff">Alpha Vantage</text>
+  <text x="240" y="593" text-anchor="middle" font-size="9" fill="#d1d5db">Stock quotes · search</text>
+  <text x="240" y="607" text-anchor="middle" font-size="8" fill="#9ca3af">Redis-cached · stale fallback</text>
+
+  <!-- Sentiment Service -->
+  <rect x="390" y="555" width="180" height="60" rx="8" fill="#4c1d95" filter="url(#shadow)"/>
+  <text x="480" y="578" text-anchor="middle" font-size="11" font-weight="700" fill="#ffffff">Sentiment Service</text>
+  <text x="480" y="593" text-anchor="middle" font-size="9" fill="#e9d5ff">Flask · TextBlob</text>
+  <text x="480" y="607" text-anchor="middle" font-size="8" fill="#d8b4fe">NewsAPI · 20 articles/ticker</text>
+
+  <!-- NewsAPI external -->
+  <rect x="630" y="555" width="160" height="60" rx="8" fill="#374151" filter="url(#shadow)"/>
+  <text x="710" y="578" text-anchor="middle" font-size="11" font-weight="700" fill="#ffffff">NewsAPI</text>
+  <text x="710" y="593" text-anchor="middle" font-size="9" fill="#d1d5db">News headlines</text>
+  <text x="710" y="607" text-anchor="middle" font-size="8" fill="#9ca3af">per-ticker sentiment scoring</text>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- CONNECTIONS                                                     -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+
+  <!-- React → Spring (REST) -->
+  <line x1="460" y1="138" x2="420" y2="158" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="420" y="152" font-size="8" fill="#64748b">HTTP/REST</text>
+
+  <!-- React ↔ Spring (WS) -->
+  <line x1="540" y1="138" x2="580" y2="158" stroke="#0ea5e9" stroke-width="1.5" marker-end="url(#arr-ws)"/>
+  <text x="560" y="152" font-size="8" fill="#0ea5e9">WebSocket</text>
+
+  <!-- Spring → PostgreSQL -->
+  <line x1="290" y1="346" x2="180" y2="370" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="200" y="363" font-size="8" fill="#64748b">JPA</text>
+
+  <!-- Spring → Redis -->
+  <line x1="360" y1="346" x2="320" y2="370" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="316" y="363" font-size="8" fill="#64748b">Cache</text>
+
+  <!-- Spring → Kafka -->
+  <line x1="453" y1="346" x2="456" y2="370" stroke="#f59e0b" stroke-width="1.5" marker-end="url(#arr-kafka)"/>
+
+  <!-- Spring → Risk Engine -->
+  <line x1="570" y1="346" x2="590" y2="370" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="556" y="363" font-size="8" fill="#64748b">REST</text>
+
+  <!-- Spring → Price Service -->
+  <line x1="700" y1="280" x2="784" y2="370" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="750" y="335" font-size="8" fill="#64748b">REST</text>
+
+  <!-- Spring → Alpha Vantage -->
+  <line x1="320" y1="346" x2="275" y2="555" stroke="#64748b" stroke-width="1.2" stroke-dasharray="4,3" marker-end="url(#arr)"/>
+
+  <!-- Sentiment Service → NewsAPI -->
+  <line x1="570" y1="585" x2="630" y2="585" stroke="#64748b" stroke-width="1.2" marker-end="url(#arr)"/>
+
+  <!-- Spring → Sentiment Service -->
+  <line x1="490" y1="346" x2="480" y2="555" stroke="#64748b" stroke-width="1.2" stroke-dasharray="4,3" marker-end="url(#arr)"/>
+  <text x="487" y="460" font-size="8" fill="#9c4dcc">REST</text>
+
+  <!-- Legend -->
+  <rect x="54" y="638" width="420" height="36" rx="6" fill="#f1f5f9"/>
+  <line x1="70" y1="656" x2="100" y2="656" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="106" y="659" font-size="9" fill="#475569">REST / JPA</text>
+  <line x1="175" y1="656" x2="205" y2="656" stroke="#0ea5e9" stroke-width="1.5" marker-end="url(#arr-ws)"/>
+  <text x="211" y="659" font-size="9" fill="#475569">WebSocket/STOMP</text>
+  <line x1="315" y1="656" x2="345" y2="656" stroke="#f59e0b" stroke-width="1.5" marker-end="url(#arr-kafka)"/>
+  <text x="351" y="659" font-size="9" fill="#475569">Kafka event</text>
+  <line x1="420" y1="656" x2="450" y2="656" stroke="#64748b" stroke-width="1.2" stroke-dasharray="4,3" marker-end="url(#arr)"/>
+  <text x="456" y="659" font-size="9" fill="#475569">External HTTP</text>
+</svg>
